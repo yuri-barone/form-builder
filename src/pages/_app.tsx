@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import { CacheProvider, EmotionCache } from '@emotion/react';
-import { AppBar } from '@euk-labs/componentz';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { CssBaseline } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,7 +15,6 @@ import { DEFAULT_LOCALE } from '@config/constants';
 
 import ErrorBoundary from '@components/ErrorBoundary';
 import CoreListener from '@components/listener/CoreListener';
-import AuthLoader from '@components/utility/AuthLoader';
 import ZodErrorMapBuilder from '@components/utility/ZodErrorMapBuilder';
 
 import globalContainer from '@containers/global.inversify';
@@ -47,7 +45,6 @@ enableStaticRendering(typeof window === 'undefined');
 
 function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps, router } = props;
-  const showAppBar = pageProps.showAppBar ?? true;
   const locale = router.locale || DEFAULT_LOCALE;
   const container = globalContainer(locale);
 
@@ -66,21 +63,10 @@ function MyApp(props: MyAppProps) {
             <ThemeProvider>
               <CssBaseline />
               <ErrorBoundary>
-                {showAppBar ? (
-                  <AppBar>
-                    <AuthLoader>
-                      <Component {...pageProps} />
-                    </AuthLoader>
-                  </AppBar>
-                ) : (
-                  <AuthLoader>
-                    <Component {...pageProps} />
-                  </AuthLoader>
-                )}
-
+                <Component {...pageProps} />
                 <Snackbar autoHideDuration={6000} />
-                <Dialog />
               </ErrorBoundary>
+              <Dialog />
             </ThemeProvider>
           </LocalizationProvider>
         </Provider>

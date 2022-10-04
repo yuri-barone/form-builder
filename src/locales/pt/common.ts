@@ -1,7 +1,7 @@
 import { Common } from '@locales/types/common';
 
 export const common: Common = {
-  title: 'Ombros',
+  title: 'Ombros - Construtor de Formulários',
   logoAlt: 'Logo da Ombros',
   type: 'Tipo',
   loading: 'Carregando',

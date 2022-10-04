@@ -1,5 +1,8 @@
 import componentzContainer from '@euk-labs/componentz/containers/global.inversify';
 
+import { AppBarStore } from '@stores/appbar';
+import { DragStore } from '@stores/drag';
+import { FieldStore } from '@stores/fields';
 import { ThemeStore } from '@stores/theme';
 import { UserStore } from '@stores/user';
 
@@ -29,6 +32,9 @@ export default function globalContainer(locale = '') {
 
     container.bind(TYPES.ThemeStore).to(ThemeStore).inSingletonScope();
     container.bind(TYPES.UserStore).to(UserStore).inSingletonScope();
+    container.bind(TYPES.AppBarStore).to(AppBarStore).inSingletonScope();
+    container.bind(TYPES.DragStore).to(DragStore).inSingletonScope();
+    container.bind(TYPES.FieldStore).to(FieldStore).inSingletonScope();
 
     return container;
   };

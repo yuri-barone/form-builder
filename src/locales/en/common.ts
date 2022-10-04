@@ -1,7 +1,7 @@
 import { Common } from '@locales/types/common';
 
 export const common: Common = {
-  title: 'Shoulders',
+  title: 'Shoulders - Form Builder',
   logoAlt: 'Shoulders Logo',
   type: 'Type',
   loading: 'Loading',

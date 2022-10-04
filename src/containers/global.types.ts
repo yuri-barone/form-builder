@@ -4,6 +4,9 @@ const TYPES = {
    */
   ThemeStore: Symbol('ThemeStore'),
   UserStore: Symbol('UserStore'),
+  AppBarStore: Symbol('AppBarStore'),
+  DragStore: Symbol('DragStore'),
+  FieldStore: Symbol('FieldStore'),
 
   /**
    * Services

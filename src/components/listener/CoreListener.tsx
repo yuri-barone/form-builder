@@ -7,9 +7,6 @@ import { useEffect } from 'react';
 
 import { getPages } from '@config/pages';
 
-import AppBarHeader from '@components/AppBar/AppBarHeader';
-import DrawerHeader from '@components/AppBar/DrawerHeader';
-
 import TYPES from '@containers/global.types';
 
 import { useTranslation } from '@hooks/services';
@@ -45,8 +42,6 @@ function CoreListener() {
     userStore.catchUnauthorizedErrors();
     userStore.catchForbiddenErrors();
 
-    uiStore.appBar.setDrawerHeaderContent(<DrawerHeader />);
-    uiStore.appBar.setAppBarHeaderContent(<AppBarHeader />);
     uiStore.appBar.setOnClickDrawerOption((page) => {
       router.push(page.link);
     });
