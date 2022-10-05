@@ -7,6 +7,7 @@ const TYPES = {
   AppBarStore: Symbol('AppBarStore'),
   DragStore: Symbol('DragStore'),
   FieldStore: Symbol('FieldStore'),
+  FormConfigStore: Symbol('FormConfigStore'),
 
   /**
    * Services

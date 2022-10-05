@@ -1,5 +1,6 @@
 import { injectable } from 'inversify';
 import { makeAutoObservable } from 'mobx';
+import { uuid } from 'uuidv4';
 
 export type FieldType =
   | 'TextField'
@@ -10,14 +11,10 @@ export type FieldType =
   | 'MaskedField';
 
 export type Field = {
+  id: string;
   type: FieldType;
   name: string;
   label: string;
-  constraints?: {
-    required?: boolean;
-    min?: number | null;
-    max?: number | null;
-  };
   gridSize?: {
     xs?: number | null;
     sm?: number | null;
@@ -29,10 +26,14 @@ export type Field = {
 
 export type FieldStoreType = {
   fields: Field[];
-  addField(field: Field): void;
-  resetFields(): void;
+  fieldToEdit: Field | null;
   fieldToInsert: Field['type'] | null;
+
+  addField(field: Omit<Field, 'id'>): void;
+  editField(field: Omit<Field, 'id' | 'type'>): void;
+  resetFields(): void;
   setFieldToInsert(field: Field['type']): void;
+  setFieldToEdit(field: Field | null): void;
   clearFieldToInsert(): void;
 };
 
@@ -43,9 +44,24 @@ export class FieldStore implements FieldStoreType {
   }
   fields: Field[] = [];
   fieldToInsert: Field['type'] | null = null;
+  fieldToEdit: Field | null = null;
+
+  setFieldToEdit(field: Field | null): void {
+    this.fieldToEdit = field;
+  }
+
+  editField() {
+    if (this.fieldToEdit) {
+      const index = this.fields.findIndex((f) => f.id === this.fieldToEdit!.id);
+      if (index !== -1) {
+        this.fields[index] = this.fieldToEdit;
+      }
+      this.setFieldToEdit(null);
+    }
+  }
 
   addField(field: Field) {
-    this.fields.push(field);
+    this.fields.push({ ...field, id: uuid() });
   }
 
   resetFields() {

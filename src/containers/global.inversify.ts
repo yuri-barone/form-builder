@@ -3,6 +3,7 @@ import componentzContainer from '@euk-labs/componentz/containers/global.inversif
 import { AppBarStore } from '@stores/appbar';
 import { DragStore } from '@stores/drag';
 import { FieldStore } from '@stores/fields';
+import { FormConfigStore } from '@stores/formConfig';
 import { ThemeStore } from '@stores/theme';
 import { UserStore } from '@stores/user';
 
@@ -35,6 +36,7 @@ export default function globalContainer(locale = '') {
     container.bind(TYPES.AppBarStore).to(AppBarStore).inSingletonScope();
     container.bind(TYPES.DragStore).to(DragStore).inSingletonScope();
     container.bind(TYPES.FieldStore).to(FieldStore).inSingletonScope();
+    container.bind(TYPES.FormConfigStore).to(FormConfigStore).inSingletonScope();
 
     return container;
   };

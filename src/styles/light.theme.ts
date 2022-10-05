@@ -18,10 +18,16 @@ const lightTheme: ThemeOptions = {
     background: {
       default: '#f5f5f5',
     },
-    primaryGradient:
-      'linear-gradient(225deg, rgba(48,141,219,1) 0%, rgba(12,62,114,1) 100%)',
+    primaryGradient: 'linear-gradient(225deg, rgba(48,141,219,1) 0%, rgba(12,62,114,1) 100%)',
   },
   components: {
+    MuiBackdrop: {
+      styleOverrides: {
+        root: {
+          backdropFilter: 'blur(5px)',
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         '::-webkit-scrollbar': {
@@ -29,8 +35,7 @@ const lightTheme: ThemeOptions = {
           backgroundColor: grey[300],
         },
         '::-webkit-scrollbar-thumb': {
-          background:
-            'linear-gradient(225deg, rgba(48,141,219,1) 0%, rgba(12,62,114,1) 100%)',
+          background: 'linear-gradient(225deg, rgba(48,141,219,1) 0%, rgba(12,62,114,1) 100%)',
           borderRadius: 16,
         },
         '::-webkit-scrollbar:horizontal': {

@@ -6,34 +6,38 @@ import React from 'react';
 
 import { useFieldStore } from '@hooks/stores';
 
+import { Field } from '@stores/fields';
+
 import { zodValidator } from '@utils/zodValidator';
 
-import AddFieldConstraintFields from './AddFieldConstraintFields';
 import { AddFieldValues, addFieldSchema } from './addField.schema';
 
 const initialValues = {
   name: '',
   label: '',
-  haveMin: false,
-  haveMax: false,
-  constraints: {
-    required: false,
-    min: null,
-    max: null,
-  },
   gridSize: {
     xs: 12,
-    sm: null,
-    md: null,
-    lg: null,
-    xl: null,
+    sm: 6,
+    md: 4,
+    lg: 3,
+    xl: 2,
   },
 };
 
-const AddFieldDialog = () => {
+const AddFieldDialog = ({ field }: { field: Field | null }) => {
   const fieldStore = useFieldStore();
   const fieldType = fieldStore.fieldToInsert;
-  const isOpen = !!fieldStore.fieldToInsert;
+  const isOpen = !!fieldStore.fieldToInsert || !!field;
+  const fieldInitialValues = field && {
+    ...field,
+    gridSize: {
+      xs: field.gridSize?.xs || null,
+      sm: field.gridSize?.sm || null,
+      md: field.gridSize?.md || null,
+      lg: field.gridSize?.lg || null,
+      xl: field.gridSize?.xl || null,
+    },
+  };
 
   const handleClose = () => {
     fieldStore.clearFieldToInsert();
@@ -41,10 +45,13 @@ const AddFieldDialog = () => {
 
   const handleSubmit = (values: AddFieldValues) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { haveMax, haveMin, ...rest } = values;
+    if (field) {
+      fieldStore.editField(values);
+      return;
+    }
     if (fieldType) {
       fieldStore.addField({
-        ...rest,
+        ...values,
         type: fieldType,
       });
       fieldStore.clearFieldToInsert();
@@ -55,7 +62,7 @@ const AddFieldDialog = () => {
     <Dialog open={isOpen} onClose={handleClose}>
       <Box p={2}>
         <Formix
-          initialValues={initialValues}
+          initialValues={fieldInitialValues || initialValues}
           validate={zodValidator(addFieldSchema)}
           onSubmit={handleSubmit}
         >
@@ -66,7 +73,7 @@ const AddFieldDialog = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
-              <FXTextField name="name" label="Name" />
+              <FXTextField autoFocus name="name" label="Name" />
             </Grid>
             <Grid item xs={12} md={6}>
               <FXTextField name="label" label="Label" />
@@ -89,9 +96,6 @@ const AddFieldDialog = () => {
                   <FXNumericField precision={0} name="gridSize.xl" label="XL" />
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <AddFieldConstraintFields />
             </Grid>
             <Grid item xs="auto">
               <Button variant="outlined" color="secondary" onClick={handleClose}>

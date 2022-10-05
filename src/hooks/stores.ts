@@ -5,6 +5,7 @@ import TYPES from '@containers/global.types';
 import { AppBarStoreType } from '@stores/appbar';
 import { DragStoreType } from '@stores/drag';
 import { FieldStoreType } from '@stores/fields';
+import { FormConfigStoreType } from '@stores/formConfig';
 import type { ThemeStoreType } from '@stores/theme';
 import type { UserStoreType } from '@stores/user';
 
@@ -26,4 +27,8 @@ export function useDragStore() {
 
 export function useFieldStore() {
   return useInjection<FieldStoreType>(TYPES.FieldStore);
+}
+
+export function useFormConfigStore() {
+  return useInjection<FormConfigStoreType>(TYPES.FormConfigStore);
 }
