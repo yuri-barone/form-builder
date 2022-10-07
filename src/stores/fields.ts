@@ -10,17 +10,19 @@ export type FieldType =
   | 'Autocomplete'
   | 'MaskedField';
 
+export type GridSize = number | 'true' | 'auto' | null;
+
 export type Field = {
   id: string;
   type: FieldType;
   name: string;
   label: string;
   gridSize?: {
-    xs?: number | null;
-    sm?: number | null;
-    md?: number | null;
-    lg?: number | null;
-    xl?: number | null;
+    xs?: GridSize;
+    sm?: GridSize;
+    md?: GridSize;
+    lg?: GridSize;
+    xl?: GridSize;
   };
 };
 
@@ -31,9 +33,12 @@ export type FieldStoreType = {
 
   addField(field: Omit<Field, 'id'>): void;
   editField(field: Omit<Field, 'id' | 'type'>): void;
+  deleteField(id: Field['id']): void;
   resetFields(): void;
   setFieldToInsert(field: Field['type']): void;
   setFieldToEdit(field: Field | null): void;
+  moveFieldUp(id: Field['id']): void;
+  moveFieldDown(id: Field['id']): void;
   clearFieldToInsert(): void;
 };
 
@@ -46,15 +51,37 @@ export class FieldStore implements FieldStoreType {
   fieldToInsert: Field['type'] | null = null;
   fieldToEdit: Field | null = null;
 
+  moveFieldUp(id: Field['id']) {
+    const index = this.fields.findIndex((f) => f.id === id);
+    if (index > 0) {
+      const temp = this.fields[index - 1];
+      this.fields[index - 1] = this.fields[index];
+      this.fields[index] = temp;
+    }
+  }
+
+  moveFieldDown(id: Field['id']) {
+    const index = this.fields.findIndex((f) => f.id === id);
+    if (index < this.fields.length - 1) {
+      const temp = this.fields[index + 1];
+      this.fields[index + 1] = this.fields[index];
+      this.fields[index] = temp;
+    }
+  }
+
+  deleteField(id: Field['id']) {
+    this.fields = this.fields.filter((f) => f.id !== id);
+  }
+
   setFieldToEdit(field: Field | null): void {
     this.fieldToEdit = field;
   }
 
-  editField() {
+  editField(field: Omit<Field, 'id' | 'type'>) {
     if (this.fieldToEdit) {
       const index = this.fields.findIndex((f) => f.id === this.fieldToEdit!.id);
       if (index !== -1) {
-        this.fields[index] = this.fieldToEdit;
+        this.fields[index] = { ...field, id: this.fieldToEdit!.id, type: this.fieldToEdit!.type };
       }
       this.setFieldToEdit(null);
     }

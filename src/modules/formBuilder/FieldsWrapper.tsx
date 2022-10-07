@@ -72,7 +72,7 @@ const FieldsWrapper = ({ children }: { children: React.ReactNode }) => {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
-          width: open ? (needsDrawer ? `calc(100% - ${drawerWidth / 1.4}px)` : width) : width,
+          width: open ? (needsDrawer ? `calc(100% + ${drawerWidth * 50}px)` : width) : width,
           height: '100%',
           scale: breakpoint ? scaleByBreakpoint(breakpoint) : undefined,
         })}

@@ -1,6 +1,12 @@
 import { Breakpoint } from '@mui/material';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { makeAutoObservable } from 'mobx';
+
+import TYPES from '@containers/global.types';
+
+import { submitFieldGenerator } from '@modules/formBuilder/submitFieldGenerator';
+
+import type { FieldStoreType } from './fields';
 
 export type FormConfigStoreType = {
   open: boolean;
@@ -9,6 +15,7 @@ export type FormConfigStoreType = {
   generateCypress: boolean;
 
   setFormTitle: (title: string) => void;
+  submit(): void;
   setGenerateCypress: (generateCypress: boolean) => void;
   setOpen: (open: boolean) => void;
   setBreakpoint: (breakpoint: Breakpoint | null) => void;
@@ -16,13 +23,20 @@ export type FormConfigStoreType = {
 
 @injectable()
 export class FormConfigStore implements FormConfigStoreType {
-  constructor() {
+  constructor(
+    @inject(TYPES.FieldStore)
+    private fieldStore: FieldStoreType
+  ) {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   open = false;
   formTitle = '';
   generateCypress = false;
   breakpoint: Breakpoint | null = 'lg';
+
+  submit() {
+    submitFieldGenerator(this.fieldStore.fields, this.formTitle);
+  }
 
   setGenerateCypress(generateCypress: boolean) {
     this.generateCypress = generateCypress;

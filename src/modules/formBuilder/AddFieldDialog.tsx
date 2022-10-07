@@ -1,5 +1,5 @@
 import { Formix } from '@euk-labs/formix';
-import { FXNumericField, FXSubmitButton, FXTextField } from '@euk-labs/formix-mui';
+import { FXSubmitButton, FXTextField } from '@euk-labs/formix-mui';
 import { Box, Button, Dialog, Grid, Typography } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -10,48 +10,44 @@ import { Field } from '@stores/fields';
 
 import { zodValidator } from '@utils/zodValidator';
 
-import { AddFieldValues, addFieldSchema } from './addField.schema';
+import { parseFieldStoreToValues, parseFieldValuesToStore } from './parseValues';
+import { AddFieldValues, addFieldSchema } from './schemas/addField.schema';
 
-const initialValues = {
+export const addFieldInitialValues = {
   name: '',
   label: '',
   gridSize: {
-    xs: 12,
-    sm: 6,
-    md: 4,
-    lg: 3,
-    xl: 2,
+    xs: '12',
+    sm: '6',
+    md: '4',
+    lg: '3',
+    xl: '2',
   },
 };
 
 const AddFieldDialog = ({ field }: { field: Field | null }) => {
   const fieldStore = useFieldStore();
   const fieldType = fieldStore.fieldToInsert;
-  const isOpen = !!fieldStore.fieldToInsert || !!field;
-  const fieldInitialValues = field && {
-    ...field,
-    gridSize: {
-      xs: field.gridSize?.xs || null,
-      sm: field.gridSize?.sm || null,
-      md: field.gridSize?.md || null,
-      lg: field.gridSize?.lg || null,
-      xl: field.gridSize?.xl || null,
-    },
-  };
+  const isOpen = !!fieldStore.fieldToInsert;
+  const fieldInitialValues = field && parseFieldStoreToValues(field);
 
   const handleClose = () => {
+    if (field) {
+      fieldStore.setFieldToEdit(null);
+    }
     fieldStore.clearFieldToInsert();
   };
 
   const handleSubmit = (values: AddFieldValues) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const correctValues = parseFieldValuesToStore(values);
     if (field) {
-      fieldStore.editField(values);
+      fieldStore.editField(correctValues);
       return;
     }
     if (fieldType) {
       fieldStore.addField({
-        ...values,
+        ...correctValues,
         type: fieldType,
       });
       fieldStore.clearFieldToInsert();
@@ -62,18 +58,18 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
     <Dialog open={isOpen} onClose={handleClose}>
       <Box p={2}>
         <Formix
-          initialValues={fieldInitialValues || initialValues}
+          initialValues={fieldInitialValues || addFieldInitialValues}
           validate={zodValidator(addFieldSchema)}
           onSubmit={handleSubmit}
         >
           <Grid container spacing={2} justifyContent="flex-end">
             <Grid item xs={12}>
               <Typography variant="h5" align="center">
-                Add {fieldType}
+                {field ? `Edit ${field.name}` : `Add ${fieldType}`}
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
-              <FXTextField autoFocus name="name" label="Name" />
+              <FXTextField inputProps={{ autoFocus: true }} name="name" label="Name" />
             </Grid>
             <Grid item xs={12} md={6}>
               <FXTextField name="label" label="Label" />
@@ -81,19 +77,19 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
             <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs>
-                  <FXNumericField precision={0} name="gridSize.xs" label="XS" />
+                  <FXTextField name="gridSize.xs" label="XS" />
                 </Grid>
                 <Grid item xs>
-                  <FXNumericField precision={0} name="gridSize.sm" label="SM" />
+                  <FXTextField name="gridSize.sm" label="SM" />
                 </Grid>
                 <Grid item xs>
-                  <FXNumericField precision={0} name="gridSize.md" label="MD" />
+                  <FXTextField name="gridSize.md" label="MD" />
                 </Grid>
                 <Grid item xs>
-                  <FXNumericField precision={0} name="gridSize.lg" label="LG" />
+                  <FXTextField name="gridSize.lg" label="LG" />
                 </Grid>
                 <Grid item xs>
-                  <FXNumericField precision={0} name="gridSize.xl" label="XL" />
+                  <FXTextField name="gridSize.xl" label="XL" />
                 </Grid>
               </Grid>
             </Grid>

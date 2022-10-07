@@ -20,13 +20,13 @@ const darkTheme: ThemeOptions = {
     primaryGradient: 'linear-gradient(225deg, rgba(48,141,219,1) 0%, rgba(12,62,114,1) 100%)',
   },
   components: {
-    MuiBackdrop: {
-      styleOverrides: {
-        root: {
-          backdropFilter: 'blur(5px)',
-        },
-      },
-    },
+    // MuiBackdrop: {
+    //   styleOverrides: {
+    //     root: {
+    //       backdropFilter: 'blur(5px)',
+    //     },
+    //   },
+    // },
     MuiCssBaseline: {
       styleOverrides: {
         '::-webkit-scrollbar': {

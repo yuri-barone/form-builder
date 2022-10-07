@@ -1,4 +1,4 @@
-import { ChevronLeft, Menu, Settings } from '@mui/icons-material';
+import { ChevronLeft, DoneAll, Menu, Settings } from '@mui/icons-material';
 import { Box, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import Image from 'next/image';
@@ -22,11 +22,15 @@ const AppBar = ({ children }: AppBarProps) => {
     formConfigStore.setOpen(true);
   };
 
+  const handleFormSubmit = () => {
+    formConfigStore.submit();
+  };
+
   return (
     <>
       <StyledMuiAppBar open={appBarStore.open}>
         <Box p={1} pl={1.5} pr={1.5}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
             <Box>
               <Stack direction="row" alignItems="center" spacing={2}>
                 <IconButton onClick={appBarStore.toggleDrawer}>
@@ -38,9 +42,14 @@ const AppBar = ({ children }: AppBarProps) => {
                 </Typography>
               </Stack>
             </Box>
-            <IconButton onClick={handleOpenFormConfig}>
-              <Settings />
-            </IconButton>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <IconButton onClick={handleFormSubmit}>
+                <DoneAll />
+              </IconButton>
+              <IconButton onClick={handleOpenFormConfig}>
+                <Settings />
+              </IconButton>
+            </Stack>
           </Stack>
         </Box>
       </StyledMuiAppBar>
@@ -55,7 +64,14 @@ const AppBar = ({ children }: AppBarProps) => {
           <DrawerContent />
         </Box>
       </Drawer>
-      <Box display="flex" justifyContent="flex-end" p={2} pl={10} pt={10} height="100vh">
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        p={2}
+        pl={appBarStore.open ? undefined : 10}
+        pt={10}
+        height="100vh"
+      >
         {children}
       </Box>
     </>

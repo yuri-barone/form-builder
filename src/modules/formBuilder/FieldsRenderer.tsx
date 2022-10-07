@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Autocomplete, DatePicker, DateRangePicker, NumericField } from '@euk-labs/componentz';
-import { Edit } from '@mui/icons-material';
-import { Grid, IconButton, TextField } from '@mui/material';
+import { Box, Grid, TextField } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -9,38 +8,20 @@ import { useFieldStore, useFormConfigStore } from '@hooks/stores';
 
 import { Field } from '@stores/fields';
 
-const FieldRenderer = ({ field }: { field: Field }) => {
-  const fieldStore = useFieldStore();
+import FieldPopoverWrapper from './PopoverWrapper';
 
-  const handleEdit = () => {
-    fieldStore.setFieldToEdit(field);
-  };
+type FieldRendererProps = {
+  field: Field;
+};
 
-  const EditButton = () => {
-    return (
-      <IconButton onClick={handleEdit}>
-        <Edit />
-      </IconButton>
-    );
-  };
-
+const FieldRenderer = ({ field }: FieldRendererProps) => {
   switch (field.type) {
     case 'TextField':
-      return (
-        <TextField
-          InputProps={{
-            endAdornment: <EditButton />,
-          }}
-          fullWidth
-          label={field.label}
-        />
-      );
+      return <TextField onContextMenu={(e) => e.preventDefault()} fullWidth label={field.label} />;
     case 'NumericField':
       return (
         <NumericField
-          InputProps={{
-            endAdornment: <EditButton />,
-          }}
+          onContextMenu={(e) => e.preventDefault()}
           fullWidth
           precision={0}
           label={field.label}
@@ -51,6 +32,7 @@ const FieldRenderer = ({ field }: { field: Field }) => {
         <DatePicker
           InputProps={{
             fullWidth: true,
+            onContextMenu: (e) => e.preventDefault(),
           }}
           value={new Date()}
           label={field.label}
@@ -61,8 +43,8 @@ const FieldRenderer = ({ field }: { field: Field }) => {
       return (
         <DateRangePicker
           InputProps={{
+            onContextMenu: (e) => e.preventDefault(),
             fullWidth: true,
-            endAdornment: <EditButton />,
           }}
           value={{ start: new Date(), end: null }}
           label={field.label}
@@ -70,17 +52,16 @@ const FieldRenderer = ({ field }: { field: Field }) => {
         />
       );
     case 'Autocomplete':
-      return <Autocomplete fullWidth label={field.label} options={[]} />;
-    case 'MaskedField':
       return (
-        <TextField
-          InputProps={{
-            endAdornment: <EditButton />,
-          }}
+        <Autocomplete
+          onContextMenu={(e) => e.preventDefault()}
           fullWidth
           label={field.label}
+          options={[]}
         />
       );
+    case 'MaskedField':
+      return <TextField onContextMenu={(e) => e.preventDefault()} fullWidth label={field.label} />;
     default:
       return null;
   }
@@ -90,21 +71,36 @@ const FieldsRenderer = () => {
   const fieldStore = useFieldStore();
   const { breakpoint } = useFormConfigStore();
 
+  const handlePopoverOpen = (field: Field) => {
+    fieldStore.setFieldToEdit(field);
+  };
+
   return (
     <Grid container spacing={2}>
       {fieldStore.fields.map((field, index) => {
         const gridProps = breakpoint
-          ? { xs: field.gridSize?.[breakpoint] || 12 }
-          : {
-              xs: field.gridSize?.xs || 12,
-              sm: field.gridSize?.sm || 12,
-              md: field.gridSize?.md || 12,
-              lg: field.gridSize?.lg || 12,
-              xl: field.gridSize?.xl || 12,
-            };
+          ? ({
+              xs:
+                field.gridSize?.[breakpoint] === 'true' ? true : field.gridSize?.[breakpoint] || 12,
+            } as unknown as { xs: number | 'auto' | true })
+          : ({
+              xs: field.gridSize?.xs === 'true' ? true : field.gridSize?.xs || 12,
+              sm: field.gridSize?.sm === 'true' ? true : field.gridSize?.sm || 12,
+              md: field.gridSize?.md === 'true' ? true : field.gridSize?.md || 12,
+              lg: field.gridSize?.lg === 'true' ? true : field.gridSize?.lg || 12,
+              xl: field.gridSize?.xl === 'true' ? true : field.gridSize?.xl || 12,
+            } as const);
         return (
-          <Grid item {...gridProps} key={field.name + index}>
-            <FieldRenderer field={field} />
+          <Grid
+            component={Box}
+            onContextMenu={(e) => e.preventDefault()}
+            item
+            {...gridProps}
+            key={field.name + index}
+          >
+            <FieldPopoverWrapper onOpen={() => handlePopoverOpen(field)}>
+              <FieldRenderer field={field} />
+            </FieldPopoverWrapper>
           </Grid>
         );
       })}
