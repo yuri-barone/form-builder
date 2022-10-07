@@ -83,15 +83,7 @@ const FieldPopoverWrapper = ({ children, onOpen }: FieldPopoverWrapperProps) => 
       <Box onContextMenu={(e) => e.preventDefault()} onMouseDown={handleMouseClick} ref={boxRef}>
         {children}
       </Box>
-      <Popover
-        open={open}
-        anchorEl={boxRef.current}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        onClose={handleClose}
-      >
+      <Popover open={open} anchorEl={boxRef.current} onClose={handleClose}>
         <Box p={2} width="30vw">
           {fieldStore.fieldToEdit && (
             <Formix

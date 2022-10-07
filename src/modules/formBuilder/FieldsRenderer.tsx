@@ -17,22 +17,14 @@ type FieldRendererProps = {
 const FieldRenderer = ({ field }: FieldRendererProps) => {
   switch (field.type) {
     case 'TextField':
-      return <TextField onContextMenu={(e) => e.preventDefault()} fullWidth label={field.label} />;
+      return <TextField fullWidth label={field.label} />;
     case 'NumericField':
-      return (
-        <NumericField
-          onContextMenu={(e) => e.preventDefault()}
-          fullWidth
-          precision={0}
-          label={field.label}
-        />
-      );
+      return <NumericField fullWidth precision={0} label={field.label} />;
     case 'DatePicker':
       return (
         <DatePicker
           InputProps={{
             fullWidth: true,
-            onContextMenu: (e) => e.preventDefault(),
           }}
           value={new Date()}
           label={field.label}
@@ -43,7 +35,6 @@ const FieldRenderer = ({ field }: FieldRendererProps) => {
       return (
         <DateRangePicker
           InputProps={{
-            onContextMenu: (e) => e.preventDefault(),
             fullWidth: true,
           }}
           value={{ start: new Date(), end: null }}
@@ -52,16 +43,9 @@ const FieldRenderer = ({ field }: FieldRendererProps) => {
         />
       );
     case 'Autocomplete':
-      return (
-        <Autocomplete
-          onContextMenu={(e) => e.preventDefault()}
-          fullWidth
-          label={field.label}
-          options={[]}
-        />
-      );
+      return <Autocomplete fullWidth label={field.label} options={[]} />;
     case 'MaskedField':
-      return <TextField onContextMenu={(e) => e.preventDefault()} fullWidth label={field.label} />;
+      return <TextField fullWidth label={field.label} />;
     default:
       return null;
   }
@@ -93,7 +77,7 @@ const FieldsRenderer = () => {
         return (
           <Grid
             component={Box}
-            onContextMenu={(e) => e.preventDefault()}
+            onContextMenu={(e: any) => e.preventDefault()}
             item
             {...gridProps}
             key={field.name + index}

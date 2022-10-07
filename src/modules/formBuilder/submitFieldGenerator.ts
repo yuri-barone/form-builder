@@ -13,67 +13,50 @@ const correctGridSize = (prefix: string, gridSize?: GridSize) => {
 };
 
 const generateTsxTemplate = (field: Field) => {
-  const { type, name, label, gridSize } = field;
-  const { xs, sm, md, lg, xl } = gridSize || {};
-  const correctedXs = correctGridSize('xs', xs);
-  const correctedSm = correctGridSize('sm', sm);
-  const correctedMd = correctGridSize('md', md);
-  const correctedLg = correctGridSize('lg', lg);
-  const correctedXl = correctGridSize('xl', xl);
+  let component = `<Grid item [gridSizes]><[field] [props] /></Grid>`;
 
-  switch (type) {
-    case 'TextField':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXTextField
-              name="${name}"
-              label="${label}"
-              fullWidth
-            />
-          </Grid>`;
-    case 'NumericField':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXNumericField
-              name="${name}"
-              label="${label}"
-              fullWidth
-            />
-          </Grid>`;
-    case 'MaskedField':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXMaskedField
-              name="${name}"
-              label="${label}"
-              fullWidth
-            />
-          </Grid>`;
-    case 'DateRangePicker':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXDateRangePicker
-              name="${name}"
-              label="${label}"
-              fullWidth
-            />
-          </Grid>`;
-    case 'DatePicker':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXDatePicker
-              name="${name}"
-              label="${label}"
-              fullWidth
-            />
-          </Grid>`;
-    case 'Autocomplete':
-      return `<Grid item ${correctedXs} ${correctedSm} ${correctedMd} ${correctedLg} ${correctedXl}>
-            <FXAutocomplete
-              name="${name}"
-              label="${label}"
-              fullWidth
-              options={[]}
-            />
-          </Grid>`;
-    default:
-      return '';
+  const { type, name, label, gridSize } = field;
+
+  if (!type) throw new Error('Type is not defined');
+
+  const { xs, sm, md, lg, xl } = gridSize || {};
+  const gridSizes = [
+    correctGridSize('xs', xs),
+    correctGridSize('sm', sm),
+    correctGridSize('md', md),
+    correctGridSize('lg', lg),
+    correctGridSize('xl', xl),
+  ];
+  const props: Record<string, unknown> = {
+    name,
+    label,
+    fullWidth: true,
+  };
+
+  if (type === 'Autocomplete') {
+    props.options = [];
   }
+
+  component = component.replace('[gridSizes]', gridSizes.join(' '));
+  component = component.replace('[field]', `FX${type}`);
+
+  Object.entries(props).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      return (component = component.replace('[props]', `${key}="${value}" [props]`));
+    }
+
+    if (typeof value === 'boolean') {
+      if (value) {
+        return (component = component.replace('[props]', `${key} [props]`));
+      }
+    }
+
+    return (component = component.replace('[props]', `${key}={${JSON.stringify(value)}} [props]`));
+  });
+
+  component = component.replace('[props]', '');
+
+  return component;
 };
 
 const importFromTypeField = (type: Field['type'], single?: boolean) => {
@@ -125,7 +108,7 @@ const ${formRFCName} = () => {
   return (
     <Formix initialValues={{}} onSubmit={}>
       <Grid container spacing={2}>
-        ${generatedFields.join(' ')}
+        ${generatedFields.join('\n')}
       </Grid>
     </Formix>
   )

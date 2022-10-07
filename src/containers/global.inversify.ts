@@ -7,9 +7,6 @@ import { FormConfigStore } from '@stores/formConfig';
 import { ThemeStore } from '@stores/theme';
 import { UserStore } from '@stores/user';
 
-import PeopleRepository from '@modules/people/repository';
-import UsersRepository from '@modules/users/repository';
-
 import { httpService } from '@services/http';
 import { LoggerService } from '@services/logger';
 import { NotificationService } from '@services/notification';
@@ -27,9 +24,6 @@ export default function globalContainer(locale = '') {
     container.bind(TYPES.TranslationService).to(TranslationService);
     container.bind(TYPES.NotificationService).to(NotificationService);
     container.bind(TYPES.LoggerService).to(LoggerService);
-
-    container.bind(TYPES.UsersRepository).to(UsersRepository);
-    container.bind(TYPES.PeopleRepository).to(PeopleRepository);
 
     container.bind(TYPES.ThemeStore).to(ThemeStore).inSingletonScope();
     container.bind(TYPES.UserStore).to(UserStore).inSingletonScope();
