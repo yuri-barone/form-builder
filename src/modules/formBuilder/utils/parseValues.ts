@@ -1,6 +1,6 @@
 import { Field, GridSize } from '@stores/fields';
 
-import { AddFieldValues } from './schemas/addField.schema';
+import { AddFieldValues } from '../schemas/addField.schema';
 
 const isFromGridSizeString = (x: string): x is 'auto' | 'true' => {
   return ['auto', 'true'].includes(x);

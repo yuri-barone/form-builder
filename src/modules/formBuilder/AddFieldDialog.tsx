@@ -1,6 +1,6 @@
 import { Formix } from '@euk-labs/formix';
 import { FXSubmitButton, FXTextField } from '@euk-labs/formix-mui';
-import { Box, Button, Dialog, Grid, Typography } from '@mui/material';
+import { Box, Button, Collapse, Dialog, Grid, SpeedDialIcon, Typography } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -10,8 +10,9 @@ import { Field } from '@stores/fields';
 
 import { zodValidator } from '@utils/zodValidator';
 
-import { parseFieldStoreToValues, parseFieldValuesToStore } from './parseValues';
 import { AddFieldValues, addFieldSchema } from './schemas/addField.schema';
+import { parseFieldStoreToValues, parseFieldValuesToStore } from './utils/parseValues';
+import { getSchemaField } from './utils/schemaFieldsBuilder';
 
 export const addFieldInitialValues = {
   name: '',
@@ -30,6 +31,8 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
   const fieldType = fieldStore.fieldToInsert;
   const isOpen = !!fieldStore.fieldToInsert;
   const fieldInitialValues = field && parseFieldStoreToValues(field);
+  const [openAdvanced, setOpenAdvanced] = React.useState(false);
+  const schemaBuilder = fieldType && getSchemaField(fieldType);
 
   const handleClose = () => {
     if (field) {
@@ -62,9 +65,9 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
           validate={zodValidator(addFieldSchema)}
           onSubmit={handleSubmit}
         >
-          <Grid container spacing={2} justifyContent="flex-end">
+          <Grid container spacing={2} justifyContent="space-between">
             <Grid item xs={12}>
-              <Typography variant="h5" align="center">
+              <Typography variant="h5">
                 {field ? `Edit ${field.name}` : `Add ${fieldType}`}
               </Typography>
             </Grid>
@@ -93,13 +96,42 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
                 </Grid>
               </Grid>
             </Grid>
+            <Grid item xs={12}>
+              <Collapse in={openAdvanced} unmountOnExit>
+                {schemaBuilder && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant="h6">Validations</Typography>
+                    </Grid>
+                    {schemaBuilder.map((option) => (
+                      <Grid item xs={option.size} key={option.name}>
+                        <option.field fullWidth name={option.name} label={option.label} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+              </Collapse>
+            </Grid>
             <Grid item xs="auto">
-              <Button variant="outlined" color="secondary" onClick={handleClose}>
-                Cancel
+              <Button
+                variant="outlined"
+                onClick={() => setOpenAdvanced(!openAdvanced)}
+                endIcon={<SpeedDialIcon open={openAdvanced} />}
+              >
+                {openAdvanced ? 'Hide advanced' : 'Show advanced'}
               </Button>
             </Grid>
             <Grid item xs="auto">
-              <FXSubmitButton label="Submit" />
+              <Grid container spacing={2}>
+                <Grid item xs="auto">
+                  <Button variant="outlined" color="secondary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item xs="auto">
+                  <FXSubmitButton label="Submit" />
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Formix>

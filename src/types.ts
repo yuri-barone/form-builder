@@ -1,8 +1,6 @@
 import { Ability } from '@casl/ability';
 import { find, keys } from 'ramda';
 
-import { ThemeType } from '@stores/theme';
-
 class Enum<T extends Record<string, string>> {
   private notFound = 'Enum not found';
 
@@ -15,10 +13,6 @@ class Enum<T extends Record<string, string>> {
   getValue(key: string) {
     return this.enumerable[key] || this.notFound;
   }
-}
-
-export interface HydrationData {
-  theme?: ThemeType;
 }
 
 export interface AutocompleteOption {

@@ -1,15 +1,14 @@
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 
-import { useThemeStore } from '@hooks/stores';
+import baseTheme from '@styles/base.theme';
 
 interface ThemeProviderProps {
   children?: React.ReactNode;
 }
 
 function ThemeProvider({ children }: ThemeProviderProps) {
-  const themeStore = useThemeStore();
-  const theme = createTheme(themeStore.themes[themeStore.theme || 'light']);
+  const theme = createTheme(baseTheme);
 
   return <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>;
 }

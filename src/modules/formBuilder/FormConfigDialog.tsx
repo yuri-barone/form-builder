@@ -1,4 +1,4 @@
-import { Checkbox } from '@euk-labs/componentz';
+import { Autocomplete, Checkbox } from '@euk-labs/componentz';
 import { Breakpoint, Button, Dialog, Grid, Stack, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/material';
 import { observer } from 'mobx-react-lite';
@@ -12,6 +12,11 @@ import { useFormConfigStore } from '@hooks/stores';
 const isBreakpoint = (x: string): x is Breakpoint => {
   return ['xs', 'sm', 'md', 'lg', 'xl'].includes(x);
 };
+
+const exportOptions = [
+  { label: 'Shoulders - Seed', value: 'shoulders-seed' },
+  { label: 'Portal Eureka', value: 'portal-eureka' },
+];
 
 const FormConfigDialog = () => {
   const formConfigStore = useFormConfigStore();
@@ -74,7 +79,7 @@ const FormConfigDialog = () => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               label="Form title"
               autoFocus
@@ -83,9 +88,17 @@ const FormConfigDialog = () => {
               onChange={handleFormTitle}
             />
           </Grid>
+          <Grid item xs={6}>
+            <Autocomplete
+              label="Export to"
+              defaultValue={exportOptions[0]}
+              fullWidth
+              options={exportOptions}
+            />
+          </Grid>
           <Grid item xs={12}>
             <Checkbox
-              label="Generate Cypress Test"
+              label="Generate Cypress Test (WIP)"
               onChange={handleGenerateCypressChange}
               checked={formConfigStore.generateCypress}
             />

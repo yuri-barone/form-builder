@@ -4,7 +4,6 @@ import { AppBarStore } from '@stores/appbar';
 import { DragStore } from '@stores/drag';
 import { FieldStore } from '@stores/fields';
 import { FormConfigStore } from '@stores/formConfig';
-import { ThemeStore } from '@stores/theme';
 import { UserStore } from '@stores/user';
 
 import { httpService } from '@services/http';
@@ -25,7 +24,6 @@ export default function globalContainer(locale = '') {
     container.bind(TYPES.NotificationService).to(NotificationService);
     container.bind(TYPES.LoggerService).to(LoggerService);
 
-    container.bind(TYPES.ThemeStore).to(ThemeStore).inSingletonScope();
     container.bind(TYPES.UserStore).to(UserStore).inSingletonScope();
     container.bind(TYPES.AppBarStore).to(AppBarStore).inSingletonScope();
     container.bind(TYPES.DragStore).to(DragStore).inSingletonScope();

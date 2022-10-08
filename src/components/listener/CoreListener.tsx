@@ -2,7 +2,6 @@ import { useUIStore } from '@euk-labs/componentz';
 import { useContainer } from 'inversify-react';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
 import { useEffect } from 'react';
 
 import { getPages } from '@config/pages';
@@ -10,9 +9,7 @@ import { getPages } from '@config/pages';
 import TYPES from '@containers/global.types';
 
 import { useTranslation } from '@hooks/services';
-import { useThemeStore, useUserStore } from '@hooks/stores';
-
-import { ThemeType } from '@stores/theme';
+import { useUserStore } from '@hooks/stores';
 
 import { getBreadcrumbPaths } from '@utils/getBreadcrumbPaths';
 
@@ -21,9 +18,7 @@ function CoreListener() {
   const container = useContainer();
   const uiStore = useUIStore();
   const userStore = useUserStore();
-  const themeStore = useThemeStore();
   const router = useRouter();
-  const cookies = parseCookies();
 
   useEffect(() => {
     if (router.locale) {
@@ -32,12 +27,6 @@ function CoreListener() {
   }, [router.locale]);
 
   useEffect(() => {
-    const themeFromCookies = cookies.theme as ThemeType | null;
-
-    if (themeFromCookies) {
-      themeStore.setTheme(themeFromCookies);
-    }
-
     userStore.startTokenInjector();
     userStore.catchUnauthorizedErrors();
     userStore.catchForbiddenErrors();

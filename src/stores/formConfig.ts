@@ -4,7 +4,7 @@ import { makeAutoObservable } from 'mobx';
 
 import TYPES from '@containers/global.types';
 
-import { submitFieldGenerator } from '@modules/formBuilder/submitFieldGenerator';
+import { submitFieldGenerator } from '@modules/formBuilder/utils/submitFieldGenerator';
 
 import type { FieldStoreType } from './fields';
 

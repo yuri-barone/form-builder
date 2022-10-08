@@ -6,15 +6,10 @@ import { AppBarStoreType } from '@stores/appbar';
 import { DragStoreType } from '@stores/drag';
 import { FieldStoreType } from '@stores/fields';
 import { FormConfigStoreType } from '@stores/formConfig';
-import type { ThemeStoreType } from '@stores/theme';
 import type { UserStoreType } from '@stores/user';
 
 export function useUserStore() {
   return useInjection<UserStoreType>(TYPES.UserStore);
-}
-
-export function useThemeStore() {
-  return useInjection<ThemeStoreType>(TYPES.ThemeStore);
 }
 
 export function useAppBarStore() {

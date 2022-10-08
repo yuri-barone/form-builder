@@ -10,8 +10,8 @@ import { useFieldStore } from '@hooks/stores';
 import { zodValidator } from '@utils/zodValidator';
 
 import { addFieldInitialValues } from './AddFieldDialog';
-import { parseFieldStoreToValues, parseFieldValuesToStore } from './parseValues';
 import { EditFieldValues, editFieldSchema } from './schemas/editField.schema';
+import { parseFieldStoreToValues, parseFieldValuesToStore } from './utils/parseValues';
 
 type FieldPopoverWrapperProps = {
   children: React.ReactNode;

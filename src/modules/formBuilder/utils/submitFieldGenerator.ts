@@ -2,7 +2,7 @@ import FileSaver from 'file-saver';
 
 import { Field, GridSize } from '@stores/fields';
 
-import { seedImports } from './config/fieldsImports';
+import { seedImports } from '../config/fieldsImports';
 
 const correctGridSize = (prefix: string, gridSize?: GridSize) => {
   if (!gridSize) return;
