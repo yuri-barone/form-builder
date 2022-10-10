@@ -1,6 +1,7 @@
 import { Autocomplete, Checkbox } from '@euk-labs/componentz';
 import { Breakpoint, Button, Dialog, Grid, Stack, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/material';
+import { AutocompleteOption } from '@types';
 import { observer } from 'mobx-react-lite';
 import Image from 'next/image';
 import React from 'react';
@@ -9,14 +10,15 @@ import Radio from '@components/form/Radio';
 
 import { useFormConfigStore } from '@hooks/stores';
 
+import { exportOptions, validatorOptions } from '@stores/formConfig';
+
 const isBreakpoint = (x: string): x is Breakpoint => {
   return ['xs', 'sm', 'md', 'lg', 'xl'].includes(x);
 };
 
-const exportOptions = [
-  { label: 'Shoulders - Seed', value: 'shoulders-seed' },
-  { label: 'Portal Eureka', value: 'portal-eureka' },
-];
+const isAutocompleteOption = (x: unknown): x is AutocompleteOption => {
+  return typeof x === 'object' && x !== null && 'label' in x && 'value' in x;
+};
 
 const FormConfigDialog = () => {
   const formConfigStore = useFormConfigStore();
@@ -38,6 +40,18 @@ const FormConfigDialog = () => {
 
   const handleFormTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     formConfigStore.setFormTitle(e.target.value);
+  };
+
+  const handleExportToChange = (_e: React.SyntheticEvent<Element, Event>, value: unknown) => {
+    if (isAutocompleteOption(value)) {
+      formConfigStore.setExportTo(value);
+    }
+  };
+
+  const handleValidatorChange = (_e: React.SyntheticEvent<Element, Event>, value: unknown) => {
+    if (isAutocompleteOption(value)) {
+      formConfigStore.setValidator(value);
+    }
   };
 
   return (
@@ -91,14 +105,24 @@ const FormConfigDialog = () => {
           <Grid item xs={6}>
             <Autocomplete
               label="Export to"
-              defaultValue={exportOptions[0]}
+              onChange={handleExportToChange}
+              value={formConfigStore.exportTo}
               fullWidth
               options={exportOptions}
             />
           </Grid>
           <Grid item xs={12}>
+            <Autocomplete
+              label="Validator"
+              onChange={handleValidatorChange}
+              value={formConfigStore.validator}
+              fullWidth
+              options={validatorOptions}
+            />
+          </Grid>
+          <Grid item xs={12}>
             <Checkbox
-              label="Generate Cypress Test (WIP)"
+              label="Generate Cypress Test"
               onChange={handleGenerateCypressChange}
               checked={formConfigStore.generateCypress}
             />

@@ -4,7 +4,7 @@ import { Field } from '@stores/fields';
 
 export const getSchemaField = (type: Field['type']) => {
   const requiredOption = {
-    name: 'required',
+    name: 'validations.required',
     label: 'Required',
     field: FXCheckbox,
     size: 'auto' as const,
@@ -12,13 +12,13 @@ export const getSchemaField = (type: Field['type']) => {
 
   const defaultOptions = [
     {
-      name: 'min',
+      name: 'validations.min',
       label: 'Min',
       field: FXNumericField,
       size: 6,
     },
     {
-      name: 'max',
+      name: 'validations.max',
       label: 'Max',
       field: FXNumericField,
       size: 6,
@@ -31,37 +31,37 @@ export const getSchemaField = (type: Field['type']) => {
     case 'NumericField':
       return [
         ...defaultOptions,
-        { name: 'precision', label: 'Precision', field: FXNumericField, size: 12 },
+        { name: 'options.precision', label: 'Precision', field: FXNumericField, size: 12 },
         requiredOption,
       ];
     case 'MaskedField':
       return [
         ...defaultOptions,
-        { name: 'mask', label: 'Mask', field: FXTextField, size: 12 },
+        { name: 'options.mask', label: 'Mask', field: FXTextField, size: 12 },
         requiredOption,
       ];
     case 'DateRangePicker':
       return [
         {
-          name: 'startAllowRetroactiveDates',
+          name: 'validations.startAllowRetroactiveDates',
           label: 'Start Allow Retroactive Dates',
           field: FXCheckbox,
           size: true,
         },
         {
-          name: 'endAllowRetroactiveDates',
+          name: 'validations.endAllowRetroactiveDates',
           label: 'End Allow Retroactive Dates',
           field: FXCheckbox,
           size: true,
         },
         {
-          name: 'startAllowFutureDates',
+          name: 'validations.startAllowFutureDates',
           label: 'Start Allow Future Dates',
           field: FXCheckbox,
           size: true,
         },
         {
-          name: 'endAllowFutureDates',
+          name: 'validations.endAllowFutureDates',
           label: 'End Allow Future Dates',
           field: FXCheckbox,
           size: true,
@@ -71,13 +71,13 @@ export const getSchemaField = (type: Field['type']) => {
     case 'DatePicker':
       return [
         {
-          name: 'allowRetroactiveDates',
+          name: 'validations.allowRetroactiveDates',
           label: 'Allow Retroactive Dates',
           field: FXCheckbox,
           size: 'auto' as const,
         },
         {
-          name: 'allowFutureDates',
+          name: 'validations.allowFutureDates',
           label: 'Allow Future Dates',
           field: FXCheckbox,
           size: 'auto' as const,
@@ -90,4 +90,10 @@ export const getSchemaField = (type: Field['type']) => {
     default:
       return defaultOptions;
   }
+};
+
+export const getAdvancedFieldPrecision = (name: string) => {
+  return name === 'validations.min' || name === 'validations.max' || name === 'options.precision'
+    ? 0
+    : undefined;
 };

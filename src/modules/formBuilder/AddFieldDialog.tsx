@@ -12,7 +12,7 @@ import { zodValidator } from '@utils/zodValidator';
 
 import { AddFieldValues, addFieldSchema } from './schemas/addField.schema';
 import { parseFieldStoreToValues, parseFieldValuesToStore } from './utils/parseValues';
-import { getSchemaField } from './utils/schemaFieldsBuilder';
+import { getAdvancedFieldPrecision, getSchemaField } from './utils/schemaFieldsBuilder';
 
 export const addFieldInitialValues = {
   name: '',
@@ -105,7 +105,12 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
                     </Grid>
                     {schemaBuilder.map((option) => (
                       <Grid item xs={option.size} key={option.name}>
-                        <option.field fullWidth name={option.name} label={option.label} />
+                        <option.field
+                          precision={getAdvancedFieldPrecision(option.name)}
+                          fullWidth
+                          name={option.name}
+                          label={option.label}
+                        />
                       </Grid>
                     ))}
                   </Grid>

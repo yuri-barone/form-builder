@@ -97,3 +97,7 @@ export interface User {
   personId: string;
   password?: string;
 }
+
+export type ExportToType = 'seedImports' | 'portalImports';
+
+export type ValidationType = 'yup' | 'zod';
