@@ -5,7 +5,7 @@ import { Field, GridSize } from '@stores/fields';
 
 import { importsConfig } from '../config/fieldsImports';
 
-const correctGridSize = (prefix: string, gridSize?: GridSize) => {
+export const correctGridSize = (prefix: string, gridSize?: GridSize) => {
   if (!gridSize) return;
 
   if (gridSize === 'auto') return `${prefix}="auto"`;

@@ -13,10 +13,11 @@ const isFromGridSizeNumber = (
 };
 
 const validateGridSize = (gridSize: string | undefined | null): GridSize => {
-  if (gridSize === null) return null;
-  if (gridSize === undefined) return null;
+  if (!gridSize) return null;
+
   if (isFromGridSizeString(gridSize)) return gridSize;
   if (isFromGridSizeNumber(gridSize)) return parseInt(gridSize);
+
   return null;
 };
 
