@@ -24,6 +24,21 @@ export type Field = {
     lg?: GridSize;
     xl?: GridSize;
   };
+  options?: {
+    precision?: number;
+    mask?: string;
+  };
+  validations?: {
+    required?: boolean;
+    min?: number;
+    max?: number;
+    startAllowRetroactiveDates?: boolean;
+    endAllowRetroactiveDates?: boolean;
+    startAllowFutureDates?: boolean;
+    endAllowFutureDates?: boolean;
+    allowRetroactiveDates?: boolean;
+    allowFutureDates?: boolean;
+  };
 };
 
 export type FieldStoreType = {

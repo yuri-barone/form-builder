@@ -61,6 +61,7 @@ const FieldsWrapper = ({ children }: { children: React.ReactNode }) => {
       <Box
         ref={setNodeRef}
         sx={(theme) => ({
+          overflowY: 'auto',
           border: isOver
             ? `1px dashed ${theme.palette.primary.main}`
             : `1px solid ${theme.palette.primary.main}`,

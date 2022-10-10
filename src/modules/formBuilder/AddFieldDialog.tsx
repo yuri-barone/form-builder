@@ -33,7 +33,11 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
   const fieldInitialValues = field && parseFieldStoreToValues(field);
   const [openAdvanced, setOpenAdvanced] = React.useState(false);
   const schemaBuilder = fieldType && getSchemaField(fieldType);
-
+  const getAdvancedFieldPrecision = (name: string) => {
+    return name === 'validations.min' || name === 'validations.max' || name === 'options.precision'
+      ? 0
+      : undefined;
+  };
   const handleClose = () => {
     if (field) {
       fieldStore.setFieldToEdit(null);
@@ -105,7 +109,12 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
                     </Grid>
                     {schemaBuilder.map((option) => (
                       <Grid item xs={option.size} key={option.name}>
-                        <option.field fullWidth name={option.name} label={option.label} />
+                        <option.field
+                          precision={getAdvancedFieldPrecision(option.name)}
+                          fullWidth
+                          name={option.name}
+                          label={option.label}
+                        />
                       </Grid>
                     ))}
                   </Grid>

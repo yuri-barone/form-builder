@@ -1,8 +1,9 @@
+import { ExportToType } from '@types';
 import FileSaver from 'file-saver';
 
 import { Field, GridSize } from '@stores/fields';
 
-import { seedImports } from '../config/fieldsImports';
+import { importsConfig } from '../config/fieldsImports';
 
 const correctGridSize = (prefix: string, gridSize?: GridSize) => {
   if (!gridSize) return;
@@ -12,10 +13,10 @@ const correctGridSize = (prefix: string, gridSize?: GridSize) => {
   return `${prefix}={${gridSize}}`;
 };
 
-const generateTsxTemplate = (field: Field) => {
+const generateTsxTemplate = (field: Field, exportTo: ExportToType) => {
   let component = `<Grid item [gridSizes]><[field] [props] /></Grid>`;
 
-  const { type, name, label, gridSize } = field;
+  const { type, name, label, gridSize, options, validations } = field;
 
   if (!type) throw new Error('Type is not defined');
 
@@ -31,6 +32,9 @@ const generateTsxTemplate = (field: Field) => {
     name,
     label,
     fullWidth: true,
+    ...options,
+    disableFuture: type === 'DatePicker' ? !validations?.allowFutureDates : undefined,
+    disablePast: type === 'DatePicker' ? !validations?.allowRetroactiveDates : undefined,
   };
 
   if (type === 'Autocomplete') {
@@ -38,9 +42,10 @@ const generateTsxTemplate = (field: Field) => {
   }
 
   component = component.replace('[gridSizes]', gridSizes.join(' '));
-  component = component.replace('[field]', `FX${type}`);
+  component = component.replace('[field]', `${importsConfig[exportTo][type]}`);
 
   Object.entries(props).forEach(([key, value]) => {
+    if (value === undefined) return;
     if (typeof value === 'string') {
       return (component = component.replace('[props]', `${key}="${value}" [props]`));
     }
@@ -59,58 +64,98 @@ const generateTsxTemplate = (field: Field) => {
   return component;
 };
 
-const importFromTypeField = (type: Field['type'], single?: boolean) => {
+const importFromTypeField = (type: Field['type'], exportTo: ExportToType, single?: boolean) => {
   switch (type) {
     case 'TextField':
-      return single ? seedImports.textFieldSingle : seedImports.textField;
+      return single ? importsConfig[exportTo].textFieldSingle : importsConfig[exportTo].TextField;
     case 'NumericField':
-      return single ? seedImports.numericFieldSingle : seedImports.numericField;
+      return single
+        ? importsConfig[exportTo].numericFieldSingle
+        : importsConfig[exportTo].NumericField;
     case 'MaskedField':
-      return single ? seedImports.maskedFieldSingle : seedImports.maskedField;
+      return single
+        ? importsConfig[exportTo].maskedFieldSingle
+        : importsConfig[exportTo].MaskedField;
     case 'DateRangePicker':
-      return single ? seedImports.dateRangePickerSingle : seedImports.dateRangePicker;
+      return single
+        ? importsConfig[exportTo].dateRangePickerSingle
+        : importsConfig[exportTo].DateRangePicker;
     case 'DatePicker':
-      return single ? seedImports.datePickerSingle : seedImports.datePicker;
+      return single ? importsConfig[exportTo].datePickerSingle : importsConfig[exportTo].DatePicker;
     case 'Autocomplete':
-      return single ? seedImports.autocompleteSingle : seedImports.autocomplete;
+      return single
+        ? importsConfig[exportTo].autocompleteSingle
+        : importsConfig[exportTo].Autocomplete;
     default:
       return '';
   }
 };
 
-const generateImports = (types: Field['type'][], type?: string) => {
+const generateImports = (types: Field['type'][], exportTo: ExportToType) => {
   if (types.length === 1) {
-    const seedImportName = importFromTypeField(types[0], true);
-    return `${seedImports.grid}
+    const seedImportName = importFromTypeField(types[0], exportTo, true);
+    return `${importsConfig[exportTo].grid}
     ${seedImportName}`;
   }
 
   const fieldsNames = types.map((field) => {
-    return importFromTypeField(field);
+    return importFromTypeField(field, exportTo);
   });
 
-  return `${seedImports.grid}
-import { ${fieldsNames.join(', ')} } from "@euk-labs/formix-mui"`;
+  return `${importsConfig[exportTo].grid}
+${importsConfig[exportTo].form}
+import { ${fieldsNames.join(', ')} } from "${importsConfig[exportTo].mainFormFieldLib}"`;
 };
 
-export const submitFieldGenerator = (fields: Field[], formTitle: string) => {
-  const generatedFields = fields.map((field) => generateTsxTemplate(field));
-  const generatedImports = generateImports(fields.map((field) => field.type));
+const generateFieldsInitialValues = (fields: Field[]) => {
+  const initialValues: Record<string, unknown> = {};
+
+  fields.forEach((field) => {
+    const { name, type } = field;
+    if (type === 'DateRangePicker') {
+      initialValues[name] = {
+        start: null,
+        end: null,
+      };
+    }
+    if (type === 'Autocomplete' || type === 'DatePicker' || type === 'NumericField') {
+      initialValues[name] = null;
+    } else {
+      initialValues[name] = '';
+    }
+  });
+
+  return initialValues;
+};
+
+export const submitFieldGenerator = (
+  fields: Field[],
+  formTitle: string,
+  exportTo: ExportToType
+) => {
+  const generatedFields = fields.map((field) => generateTsxTemplate(field, exportTo));
+  const generatedImports = generateImports(
+    fields.map((field) => field.type),
+    exportTo
+  );
   const unspacedFormTitle = formTitle.replace(/\s/g, '');
   const capitalUnspacedFormTitle =
     unspacedFormTitle.charAt(0).toUpperCase() + unspacedFormTitle.slice(1);
   const fileName = formTitle ? `${capitalUnspacedFormTitle}.tsx` : 'Form.tsx';
   const formRFCName = formTitle ? `${capitalUnspacedFormTitle}` : 'Form';
+  const generatedInitialValues = generateFieldsInitialValues(fields);
 
   const template = `${generatedImports}
 
+const initialValues = ${JSON.stringify(generatedInitialValues, null, 2)}
+
 const ${formRFCName} = () => {
   return (
-    <Formix initialValues={{}} onSubmit={}>
+    ${importsConfig[exportTo].formBody}
       <Grid container spacing={2}>
         ${generatedFields.join('\n')}
       </Grid>
-    </Formix>
+    ${importsConfig[exportTo].formFooter}
   )
 }
                     
