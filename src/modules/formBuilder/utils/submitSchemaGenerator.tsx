@@ -1,25 +1,22 @@
+import { ValidationType } from '@types';
 import FileSaver from 'file-saver';
 
 import { Field } from '@stores/fields';
 
-const getValidationByType = (type: Field['type'], validatorType: 'zod' | 'yup') => {
+const getValidationByType = (type: Field['type'], validatorType: ValidationType) => {
   switch (type) {
-    case 'TextField':
-      return 'string()';
     case 'NumericField':
       return 'number()';
     case 'DatePicker':
       return 'date()';
     case 'Autocomplete':
       return `object({ label: ${validatorType}.string(), value: ${validatorType}.unkown() }).nullable()`;
-    case 'MaskedField':
-      return 'string()';
     default:
       return 'string()';
   }
 };
 
-export const submitSchemaGenerator = (fields: Field[], formTitle: string, type: 'zod' | 'yup') => {
+export const submitSchemaGenerator = (fields: Field[], formTitle: string, type: ValidationType) => {
   const splitedTitle = formTitle.split(' ');
   const typeTitle = splitedTitle
     .map((word) => {

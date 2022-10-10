@@ -91,8 +91,6 @@ export class FormConfigStore implements FormConfigStoreType {
 
   private get formatedExportTo(): ExportToType {
     switch (this.exportTo?.value) {
-      case 'shoulders-seed':
-        return 'seedImports';
       case 'portal-eureka':
         return 'portalImports';
       default:

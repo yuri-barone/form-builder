@@ -33,12 +33,15 @@ const generateTsxTemplate = (field: Field, exportTo: ExportToType) => {
     label,
     fullWidth: true,
     ...options,
-    disableFuture: type === 'DatePicker' ? !validations?.allowFutureDates : undefined,
-    disablePast: type === 'DatePicker' ? !validations?.allowRetroactiveDates : undefined,
   };
 
   if (type === 'Autocomplete') {
     props.options = [];
+  }
+
+  if (type === 'DatePicker') {
+    props.disableFuture = !validations?.allowFutureDates;
+    props.disablePast = !validations?.allowRetroactiveDates;
   }
 
   component = component.replace('[gridSizes]', gridSizes.join(' '));
