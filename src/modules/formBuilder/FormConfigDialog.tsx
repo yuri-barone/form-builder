@@ -122,7 +122,7 @@ const FormConfigDialog = () => {
           </Grid>
           <Grid item xs={12}>
             <Checkbox
-              label="Generate Cypress Test (WIP)"
+              label="Generate Cypress Test"
               onChange={handleGenerateCypressChange}
               checked={formConfigStore.generateCypress}
             />

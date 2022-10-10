@@ -91,3 +91,9 @@ export const getSchemaField = (type: Field['type']) => {
       return defaultOptions;
   }
 };
+
+export const getAdvancedFieldPrecision = (name: string) => {
+  return name === 'validations.min' || name === 'validations.max' || name === 'options.precision'
+    ? 0
+    : undefined;
+};

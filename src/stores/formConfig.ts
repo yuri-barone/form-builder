@@ -5,6 +5,7 @@ import { makeAutoObservable } from 'mobx';
 
 import TYPES from '@containers/global.types';
 
+import { submitCypressGenerator } from '@modules/formBuilder/utils/submitCypressGenerator';
 import { submitFieldGenerator } from '@modules/formBuilder/utils/submitFieldGenerator';
 import { submitSchemaGenerator } from '@modules/formBuilder/utils/submitSchemaGenerator';
 
@@ -59,6 +60,9 @@ export class FormConfigStore implements FormConfigStoreType {
       this.formTitle,
       this.validator?.value as 'zod' | 'yup'
     );
+    if (this.generateCypress) {
+      submitCypressGenerator(this.fieldStore.fields, this.formTitle);
+    }
   }
 
   setExportTo(exportTo: AutocompleteOption | null) {

@@ -12,7 +12,7 @@ import { zodValidator } from '@utils/zodValidator';
 
 import { AddFieldValues, addFieldSchema } from './schemas/addField.schema';
 import { parseFieldStoreToValues, parseFieldValuesToStore } from './utils/parseValues';
-import { getSchemaField } from './utils/schemaFieldsBuilder';
+import { getAdvancedFieldPrecision, getSchemaField } from './utils/schemaFieldsBuilder';
 
 export const addFieldInitialValues = {
   name: '',
@@ -33,11 +33,7 @@ const AddFieldDialog = ({ field }: { field: Field | null }) => {
   const fieldInitialValues = field && parseFieldStoreToValues(field);
   const [openAdvanced, setOpenAdvanced] = React.useState(false);
   const schemaBuilder = fieldType && getSchemaField(fieldType);
-  const getAdvancedFieldPrecision = (name: string) => {
-    return name === 'validations.min' || name === 'validations.max' || name === 'options.precision'
-      ? 0
-      : undefined;
-  };
+
   const handleClose = () => {
     if (field) {
       fieldStore.setFieldToEdit(null);

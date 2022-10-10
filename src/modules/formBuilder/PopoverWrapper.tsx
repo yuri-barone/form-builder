@@ -1,7 +1,16 @@
 import { Formix } from '@euk-labs/formix';
 import { FXSubmitButton, FXTextField } from '@euk-labs/formix-mui';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
-import { Box, Button, Grid, IconButton, Popover } from '@mui/material';
+import {
+  Box,
+  Button,
+  Collapse,
+  Grid,
+  IconButton,
+  Popover,
+  SpeedDialIcon,
+  Typography,
+} from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 
@@ -12,6 +21,7 @@ import { zodValidator } from '@utils/zodValidator';
 import { addFieldInitialValues } from './AddFieldDialog';
 import { EditFieldValues, editFieldSchema } from './schemas/editField.schema';
 import { parseFieldStoreToValues, parseFieldValuesToStore } from './utils/parseValues';
+import { getAdvancedFieldPrecision, getSchemaField } from './utils/schemaFieldsBuilder';
 
 type FieldPopoverWrapperProps = {
   children: React.ReactNode;
@@ -22,6 +32,8 @@ const FieldPopoverWrapper = ({ children, onOpen }: FieldPopoverWrapperProps) => 
   const boxRef = React.useRef<HTMLDivElement>(null);
   const fieldStore = useFieldStore();
   const [open, setOpen] = React.useState(false);
+  const [openAdvanced, setOpenAdvanced] = React.useState(false);
+  const schemaBuilder = fieldStore.fieldToEdit && getSchemaField(fieldStore.fieldToEdit.type);
   const initialValues = fieldStore.fieldToEdit
     ? parseFieldStoreToValues(fieldStore.fieldToEdit)
     : addFieldInitialValues;
@@ -84,14 +96,14 @@ const FieldPopoverWrapper = ({ children, onOpen }: FieldPopoverWrapperProps) => 
         {children}
       </Box>
       <Popover open={open} anchorEl={boxRef.current} onClose={handleClose}>
-        <Box p={2} width="30vw">
+        <Box p={2} width="40vw">
           {fieldStore.fieldToEdit && (
             <Formix
               initialValues={initialValues}
               validate={zodValidator(editFieldSchema)}
               onSubmit={handleFieldEdit}
             >
-              <Grid container spacing={2} justifyContent="flex-end">
+              <Grid container spacing={2} justifyContent="space-between">
                 <Grid item xs={12}>
                   <FXTextField name="name" label="Name" />
                 </Grid>
@@ -117,23 +129,57 @@ const FieldPopoverWrapper = ({ children, onOpen }: FieldPopoverWrapperProps) => 
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} sm="auto">
-                  <IconButton onClick={handleFieldMoveUp}>
-                    <ArrowUpward />
-                  </IconButton>
+                <Grid item xs={12}>
+                  <Collapse in={openAdvanced} unmountOnExit>
+                    {schemaBuilder && (
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <Typography variant="h6">Validations</Typography>
+                        </Grid>
+                        {schemaBuilder.map((option) => (
+                          <Grid item xs={option.size} key={option.name}>
+                            <option.field
+                              precision={getAdvancedFieldPrecision(option.name)}
+                              fullWidth
+                              name={option.name}
+                              label={option.label}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                  </Collapse>
                 </Grid>
-                <Grid item xs={12} sm="auto">
-                  <IconButton onClick={handleFieldMoveDown}>
-                    <ArrowDownward />
-                  </IconButton>
-                </Grid>
-                <Grid item xs={12} sm="auto">
-                  <Button variant="outlined" onClick={handleFieldDelete}>
-                    Delete
+                <Grid item xs={12} sm="auto" alignSelf="flex-start">
+                  <Button
+                    variant="outlined"
+                    onClick={() => setOpenAdvanced(!openAdvanced)}
+                    endIcon={<SpeedDialIcon open={openAdvanced} />}
+                  >
+                    {openAdvanced ? 'Hide advanced' : 'Show advanced'}
                   </Button>
                 </Grid>
                 <Grid item xs={12} sm="auto">
-                  <FXSubmitButton label="Save" />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm="auto">
+                      <IconButton onClick={handleFieldMoveUp}>
+                        <ArrowUpward />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={12} sm="auto">
+                      <IconButton onClick={handleFieldMoveDown}>
+                        <ArrowDownward />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={12} sm="auto">
+                      <Button variant="outlined" onClick={handleFieldDelete}>
+                        Delete
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm="auto">
+                      <FXSubmitButton label="Save" />
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Formix>
